@@ -34,8 +34,8 @@ public class RootDaoConfig {
      * 获得数据库源，配置数据库连接池
      * @return
      */
-    @Bean
-    public DataSource getDataSource(){
+    @Bean(name = "dataSource")
+    public ComboPooledDataSource dataSource(){
         ComboPooledDataSource dataSource=new ComboPooledDataSource();
         try {
             dataSource.setDriverClass(env.getProperty("jdbc.driver",String.class));
@@ -64,7 +64,7 @@ public class RootDaoConfig {
     public SqlSessionFactoryBean getSqlSessionFactory(DataSource dataSource) throws IOException {
         SqlSessionFactoryBean factoryBean=new SqlSessionFactoryBean();
         //设置连接池
-        factoryBean.setDataSource(getDataSource());
+        factoryBean.setDataSource(dataSource());
         //设置配置文件
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver()
                 .getResources("classpath:mapper/*.xml"));

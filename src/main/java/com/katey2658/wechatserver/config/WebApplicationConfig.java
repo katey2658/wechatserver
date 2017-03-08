@@ -21,7 +21,7 @@ public class WebApplicationConfig
      * @return
      */
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[]{RootDaoConfig.class, RootServiceConfig.class};
+        return new Class<?>[]{ RootServiceConfig.class};
     }
 
     /**
