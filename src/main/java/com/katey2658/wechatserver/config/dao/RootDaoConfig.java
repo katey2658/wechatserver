@@ -1,7 +1,9 @@
 package com.katey2658.wechatserver.config.dao;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +23,7 @@ import java.io.IOException;
  */
 @Configuration
 @PropertySource("classpath:jdbc.properties")
-@ComponentScan(basePackages = {"com.katey2658.wechatserver.dao"})
+@MapperScan(basePackages = {"com.katey2658.mapper"})
 public class RootDaoConfig {
 
     /**
@@ -57,21 +59,20 @@ public class RootDaoConfig {
 
     /**
      * 获得MyBatis工厂Bean
-     * @param dataSource
      * @return
      */
     @Bean(name = "sqlSessionFactory")
-    public SqlSessionFactoryBean getSqlSessionFactory(DataSource dataSource) throws IOException {
+    public SqlSessionFactoryBean getSqlSessionFactory() throws Exception {
         SqlSessionFactoryBean factoryBean=new SqlSessionFactoryBean();
+        //设置Mybatis全局配置
+        factoryBean.setConfiguration(getConfiguration());
         //设置连接池
         factoryBean.setDataSource(dataSource());
         //设置配置文件
-        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver()
-                .getResources("classpath:mapper/*.xml"));
-        //设置Mybatis全局配置
-        factoryBean.setConfiguration(getConfiguration());
+       // factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver()
+        //        .getResources("classpath:mapper/*.xml"));
         //扫描entity包，使用别名
-        factoryBean.setTypeAliasesPackage("com.katey2658.wechatserver.entity");
+        factoryBean.setTypeAliasesPackage("com.katey2658.wecharserver.domain");
         return factoryBean;
     }
 
@@ -79,7 +80,7 @@ public class RootDaoConfig {
      * Mybatis的配置文件
      * @return
      */
-    @Bean
+    @Bean(name = {"configuration"})
     public org.apache.ibatis.session.Configuration getConfiguration(){
         org.apache.ibatis.session.Configuration configuration=new org.apache.ibatis.session.Configuration();
         //使用jdbc的generatedKey获取数据库自增主键
@@ -95,13 +96,13 @@ public class RootDaoConfig {
      * 动态扫描接口包，实现动态实现dao接口，注入到容器中
      * @return
      */
-    @Bean
-    public MapperScannerConfigurer getMapperScannerConfigurer(){
-        MapperScannerConfigurer configurer=new MapperScannerConfigurer();
-        //注入工厂Bean，注意这里直接写名字
-        configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
-        //设置扫描接口
-        configurer.setBasePackage("com.katey2658.wechatserver.dao");
-        return configurer;
-    }
+//    @Bean
+//    public MapperScannerConfigurer getMapperScannerConfigurer(){
+//        MapperScannerConfigurer configurer=new MapperScannerConfigurer();
+//        //注入工厂Bean，注意这里直接写名字
+//        configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
+//        //设置扫描接口
+//        configurer.setBasePackage("com.katey2658.wechatserver.repository");
+//        return configurer;
+//    }
 }

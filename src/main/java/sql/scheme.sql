@@ -10,7 +10,7 @@ id unsigned bigint NOT  NULL  auto_increment COMMENT '消息Id',
 chat_session_id unsigned bigint NOT NULL  COMMENT '会话ID',
 from_user_id unsigned INT  NOT  NULL COMMent '发送用户编号',
 to_user_id unsigned INT NOT NULL comment '接收用户',
-status tinyint NOT NULL DEFAULT 0 comment '信息状态',
+status tinyint NOT NULL DEFAULT 0 comment '信息状态:',
 message_text VARCHAR (100) comment '消息文本内容',
 gmt_create date_time NOT NULL DEFAULT CURRENT_TIMESTAMP comment '创建时间',
 gmt_modified date_time NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -21,7 +21,7 @@ KEY idx_gmtcreate(gmt_create)
 
 # 创建用户注册信息
 CREATE TABLE wc_user{
-id unsigned INT NOT NULL  DEFAULT auto_increment comment '用户Id',
+id unsigned  INT NOT NULL  DEFAULT auto_increment comment '用户Id',
 username VARCHAR (20) UNION NOT NULL comment '用户名',
 telphone VARCHAR (20) UNION NOT NULL comment '用户手机号',
 qr_code CHAR (300) NOT NULL comment '用户二维码',

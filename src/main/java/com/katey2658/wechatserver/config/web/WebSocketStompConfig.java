@@ -37,6 +37,5 @@ public class WebSocketStompConfig extends AbstractWebSocketMessageBrokerConfigur
 //                .setClientPasscode();
         //发往应用程序的消息将会带有前缀
         registry.setApplicationDestinationPrefixes("/app");
-
     }
 }

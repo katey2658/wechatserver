@@ -1,16 +1,22 @@
 package com.katey2658.wechatserver.config.web;
 
-import freemarker.template.utility.XmlEscape;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.ServletConfigAware;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
+import org.springframework.web.servlet.config.annotation.*;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import java.util.Set;
 
 /**
  * web相关的配置类
@@ -18,14 +24,17 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"com.katey2658.wechatserver.controller"})
-public class WebConfig extends WebMvcConfigurerAdapter{
+@ComponentScan(basePackages = {"com.katey2658.wechatserver.controller",
+        "com.katey2658.wechatserver.api"})
+public class WebConfig extends WebMvcConfigurerAdapter implements ServletConfigAware{
+
+    private ServletContext servletContext;
 
     /**
      * 配置视图解析器
      * @return
      */
-    @Bean
+    /*@Bean
     public ViewResolver getViewResolver(){
         FreeMarkerViewResolver viewResolver=new FreeMarkerViewResolver();
         viewResolver.setContentType("text/html;charset=UTF-8");
@@ -41,12 +50,65 @@ public class WebConfig extends WebMvcConfigurerAdapter{
         return viewResolver;
     }
 
-    @Bean
+    */
+    /*@Bean
     public FreeMarkerConfigurer getFreeMarkerConfig(){
         FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
         configurer.setTemplateLoaderPath("/WEB-INF/template/");
         configurer.setDefaultEncoding("UTF-8");
         return configurer;
+    }
+    */
+
+    /**
+     * 将逻辑视图名称解析为Thyleaf视图解析器
+     * @return
+     */
+    @Bean
+    public ViewResolver viewResolver(TemplateEngine templateEngine){
+        ThymeleafViewResolver viewResolver=new ThymeleafViewResolver();
+        viewResolver.setTemplateEngine(templateEngine);
+        viewResolver.setOrder(1);
+        viewResolver.setViewNames(new String[]{".html",".xhtml"});
+        return viewResolver;
+    }
+
+    /**
+     * 处理模板并渲染结果
+     * @return
+     */
+    @Bean
+    public TemplateEngine templateEngine(Set<ITemplateResolver> resolvers){
+        SpringTemplateEngine templateEngine=new SpringTemplateEngine();
+        templateEngine.setTemplateResolvers(resolvers);
+        templateEngine.setEnableSpringELCompiler(true);
+        return templateEngine;
+    }
+
+    /**
+     * 加载Thymeleaf模板
+     * @return
+     */
+    @Bean
+    public ServletContextTemplateResolver templateResolver(){
+        ServletContextTemplateResolver templateResolver=new ServletContextTemplateResolver(this.servletContext);
+        templateResolver.setPrefix("WEB-INF/template/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCacheable(true);
+        templateResolver.setOrder(2);
+        return templateResolver;
+    }
+
+
+    @Bean
+    public ClassLoaderTemplateResolver emailTemplateResolver(){
+        ClassLoaderTemplateResolver resolver=new ClassLoaderTemplateResolver();
+        resolver.setPrefix("/mail/");
+        resolver.setTemplateMode("HTML5");
+        resolver.setCharacterEncoding("UTF-8");
+        resolver.setOrder(1);
+        return resolver;
     }
 
 
@@ -59,15 +121,22 @@ public class WebConfig extends WebMvcConfigurerAdapter{
         configurer.enable();
     }
 
+    @Override
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.servletContext=servletConfig.getServletContext();
+    }
+
     /**
      * 注册拦截器
      * @param registry
      */
-    @Override
+
+   /* @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //父类是一个空方法
         //添加拦截器
         //registry.addInterceptor()
         super.addInterceptors(registry);
     }
+    */
 }

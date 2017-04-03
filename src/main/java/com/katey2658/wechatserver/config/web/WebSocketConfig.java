@@ -1,6 +1,6 @@
 package com.katey2658.wechatserver.config.web;
 
-import com.katey2658.wechatserver.manager.WebSocketMessageHandler;
+import com.katey2658.wechatserver.handler.WebSocketMessageHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
  */
 @Configuration
 @EnableWebSocket
-@ComponentScan(basePackages = {"com.katey2658.wechatserver.manager"})
+@ComponentScan(basePackages = {"com.katey2658.wechatserver.api"})
 public class WebSocketConfig implements WebSocketConfigurer {
 
     /**

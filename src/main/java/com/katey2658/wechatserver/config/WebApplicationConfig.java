@@ -7,6 +7,8 @@ import com.katey2658.wechatserver.config.web.WebSecurityConfig;
 import com.katey2658.wechatserver.config.web.WebSocketConfig;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletRegistration;
 
@@ -21,7 +23,7 @@ public class WebApplicationConfig
      * @return
      */
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[]{ RootServiceConfig.class};
+        return new Class<?>[]{ RootServiceConfig.class,RootDaoConfig.class};
     }
 
     /**
@@ -49,7 +51,7 @@ public class WebApplicationConfig
         CharacterEncodingFilter encodingFilter=new CharacterEncodingFilter();
         encodingFilter.setEncoding("UTF-8");
         encodingFilter.setForceEncoding(true);
-        return super.getServletFilters();
+        return new Filter[]{encodingFilter};
     }
 
     /**
@@ -63,5 +65,9 @@ public class WebApplicationConfig
                 new MultipartConfigElement("/temp/upload"));
         //添加对DWR的映射
         registration.addMapping("/dwr/*");
+
+        //可以在这里使用设置spring.profiles.active值和spring.profiles.default
+        //registration.setInitParameter()
+        //registration.setInitParameters()
     }
 }

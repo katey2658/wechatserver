@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h4>用户模型设计</h4>
+    <ul>
+      <li>管理和维护用户信息</li>
+      <li></li>
+      <li></li>
+    </ul>
+    <h4>用户实体</h4>
+    <ol>
+      <!-- 冷热数据分离：用户登录表 -->
+      <li>登录名</li>
+      <li>密码</li>
+      <li>用户状态</li>
+
+      <!--一个用户可能有多个收货地址 用户地址表 -->
+      <li>邮政编码</li>
+      <li>省</li>
+      <li>市</li>
+      <li>区</li>
+      <li>地址</li>
+
+     <!--  用户级别信息-->
+      <li>会员级别</li>
+      <li>用户级别上限</li>
+      <li>用户级别下限</li>
+
+      <!--  附加信息 拓展-->
+      <li>用户姓名</li>
+      <li>邮箱</li>
+      <li>性别</li>
+      <li>积分</li>
+      <li>注册时间</li>
+      <li>生日</li>
+      <li>用户余额</li>
+      <li>证件信息</li>
+      <li>手机号</li>
+      <li>证件号码</li>
+    </ol>
+
+
+    <h5>大表：</h5>
+    <ul>
+      <li>数据插入异常</li>
+      <li>数据更新异常</li>
+      <li>数据删除异常</li>
+      <li>数据冗余</li>
+      <li>数据表过宽</li>
+    </ul>
+
+    <p>
+    第三范式：一个表中的列和其它列之间记不包含函数依赖关系，也不包含传递依赖关系，那么这个表的设计就复合第三范式
+    </p>
+
+    <h3>Mysql分区表使用</h3>
+    <ol>
+      <li>确认MysSQL服务器是否支持分区表：show plugins;可以找到partition插件</li>
+      <li>
+        <ul>
+          <li>在逻辑上为一个表，在物理上存储在多个文件中:最后多了几句</li>
+          <li>文件：.frm表结构文件 .ibd数据</li>
+        </ul>
+        <h4>按hash分区</h4>
+        <ul>
+          <li>特点：根据MOD(分区键，分区数)的值把数据行存储到表的不同分区中</li>
+          <li>特点：数据可以平均的分布在各个分区中</li>
+          <li>特点：hash分区的键值必须市一个int 类型的值，或是通过函数可以转为int类型</li>
+        </ul>
+        <p>
+          如何建立：partition by hash(customer_id) partitions 4
+          注意：如果key是时间的话需要先转化为整数unix_timestamp(login_time)
+               指定分区数量
+          变成整数：可用函数 abs() dayofmonth() datediff() hour() mod() second() to_seconds() year()
+        </p>
+        <h4>按范围分区：range</h4>
+        <ul>
+          <li>根据分区键值的范围把数据行存储到表的不同分区中</li>
+          <li>多个分区的范围要连续，但是不能重叠</li>
+          <li>默认情况下使用value less than属性，即每个分区不包括指定的那个值</li>
+          <li>
+            <h4>适用场景</h4>
+            <ul>
+              <li>分区为日期或是时间类型:顺便可以按时间归档</li>
+              <li>所有查询中都包括分区键</li>
+              <li>定期按分区范围清理历史数据</li>
+            </ul>
+          </li>
+        </ul>
+        <p>
+          使用：partition by range(customer_id)(
+            partition p0 values less than(10000),
+            partition p1 values less than(20000),
+            partition p2 values less than(30000),
+            partition p3 values less than maxvalue
+          )
+        </p>
+      </li>
+    </ol>
+    <h3>List分区</h3>
+    <ul>
+      <li>按分区键值的列表进行分区</li>
+      <li>同范围分区一样，各分区的列表值不能重复</li>
+      <li>每一行数据必须能找到对应的分区列表，否则数据插入失败</li>
+      <li>
+        <h4>如何建立</h4>
+        <p>
+          partition by list(login_type)(
+          partition p0 values in (1,3,5,7,9),
+          partition p1 values in (2,4,6,8)
+          )
+        </p>
+      </li>
+    </ul>
+
+    <h4>如何为customer_login_log表分区</h4>
+    <p>
+      业务场景：
+      用户每次登录都会记录customer_login_log日志
+      用户登录日志保存一年，一年后可以删除
+    </p>
+    <p>
+      使用范围分区比较好;
+      分区键选择：时间字段 login_time
+    </p>
+
+    <h4>使用分区表的注意事项</h4>
+    <ol>
+      <li>结合业务场景选择分区，避免跨分区查询</li>
+      <li>对分区表进行查询最好在where从句中包含分区键</li>
+      <li>具有主键或唯一索引的表，主键或唯一索引是分区键的一部分</li>
+    </ol>
+
+
+    <h4>商品实体</h4>
+    <ul>
+      <li>商品名称</li>
+      <li>条形码</li>
+      <li>分类</li>
+      <li>品牌名称</li>
+      <li>供应商</li>
+      <li>销售价格</li>
+      <li>重量</li>
+      <li>长度</li>
+      <li>宽度</li>
+      <li>高度</li>
+      <li>图片信息</li>
+      <li>描述</li>
+      <li>生产时间</li>
+      <li>有效期</li>
+      <li>颜色</li>
+      <li>上下架状态</li>
+      <li>成本</li>
+    </ul>
+
+    <h4>订单实体</h4>
+    <ul>
+      <li>下单用户</li>
+      <li>收货人</li>
+      <li>支付方式</li>
+      <li>支付金额</li>
+      <li>优惠金额</li>
+      <li>省</li>
+      <li>市</li>
+      <li>区</li>
+      <li>地址</li>
+      <li>编码</li>
+      <li>支付时间</li>
+      <li>收货时间</li>
+      <li>状态</li>
+      <li>下单时间</li>
+      <li>手机号</li>
+      <li>订单积分</li>
+      <li>物流信息</li>
+      <li>运费</li>
+      <li>
+        <h5>订单商品</h5>
+        <ul>
+          <li>商品数量</li>
+          <li>商品名称</li>
+          <li>商品价格</li>
+          <li>
+            <h5>仓库信息</h5>
+            <ul>
+              <li>电话</li>
+              <li>名称</li>
+              <li>联系人</li>
+              <li>地址</li>
+            </ul>
+          </li>
+
+        </ul>
+      </li>
+    </ul>
+    <h3>Db规划</h3>
+    <ol>
+      <li>为以后数据库迁移提供方便</li>
+      <li>避免跨库操作，把经常一起关联查询的表放到一个db中</li>
+      <li>为了方便识别表所在的db,在表名前增加库名前缀</li>
+    </ol>
+
+    <h3>数据库以及数据库表设计</h3>
+    <h4>用户数据库：mc_customerdb</h4>
+    <ul>
+      <li>用户信息表：customer_inf</li>
+      <li>用户登录表：customer_login</li>
+      <li>用户级别表：customer_level_inf</li>
+      <li>用户登录日志表：customer_login_log</li>
+      <li>用户积分日志表：customer_point_log</li>
+      <li>用户余额日志表：customer_balance_log</li>
+    </ul>
+    <h4>商品数据库：mc_productdb</h4>
+    <ul>
+      <li>商品信息表：product_info</li>
+      <li>商品图片信息白表：product_pic_info</li>
+      <li>商品目录表：product_category</li>
+      <li>商品供应商信息表：product_supplier_info</li>
+      <li>商品评论表：product_comment</li>
+      <li>商品品牌信息表：product_brand_info</li>
+    </ul>
+    <h4>订单数据库：mc_orderdb</h4>
+    <ul>
+      <li>订单主表：order_master</li>
+      <li>订单详细表：order_detail</li>
+      <li>订单用户地址表：order_customer_addr</li>
+      <li>仓库信息表：warehouse_info</li>
+      <li>物流 信息表：shipping_info</li>
+      <li>购物车表：order_cart</li>
+      <li>商品仓库表：warehouse_product</li>
+    </ul>
+    <h3>分库分表的操作</h3>
+    <ol>
+      <li>准备好对应数据库脚本</li>
+      <li>创建数据库</li>
+      <li>将各数据库脚本导入到数据库中 mysql -uroot -p mc_customerdb< mc_customerdb.sql</li>
+    </ol>
+  </body>
+</html>
