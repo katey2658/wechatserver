@@ -1,5 +1,8 @@
 package com.katey2658.wechatserver.config.web;
 
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -8,14 +11,12 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import java.util.Set;
 
 /**
@@ -26,10 +27,9 @@ import java.util.Set;
 @EnableWebMvc
 @ComponentScan(basePackages = {"com.katey2658.wechatserver.controller",
         "com.katey2658.wechatserver.api"})
-public class WebConfig extends WebMvcConfigurerAdapter implements ServletConfigAware{
+public class WebConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware{
 
-    private ServletContext servletContext;
-
+    private ApplicationContext applicationContext;
     /**
      * 配置视图解析器
      * @return
@@ -69,7 +69,7 @@ public class WebConfig extends WebMvcConfigurerAdapter implements ServletConfigA
         ThymeleafViewResolver viewResolver=new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine);
         viewResolver.setOrder(1);
-        viewResolver.setViewNames(new String[]{".html",".xhtml"});
+       //viewResolver.setViewNames(new String[]{".html",".xhtml"});
         return viewResolver;
     }
 
@@ -78,9 +78,9 @@ public class WebConfig extends WebMvcConfigurerAdapter implements ServletConfigA
      * @return
      */
     @Bean
-    public TemplateEngine templateEngine(Set<ITemplateResolver> resolvers){
+    public SpringTemplateEngine templateEngine(){
         SpringTemplateEngine templateEngine=new SpringTemplateEngine();
-        templateEngine.setTemplateResolvers(resolvers);
+        templateEngine.setTemplateResolver(templateResolver());
         templateEngine.setEnableSpringELCompiler(true);
         return templateEngine;
     }
@@ -90,27 +90,15 @@ public class WebConfig extends WebMvcConfigurerAdapter implements ServletConfigA
      * @return
      */
     @Bean
-    public ServletContextTemplateResolver templateResolver(){
-        ServletContextTemplateResolver templateResolver=new ServletContextTemplateResolver(this.servletContext);
-        templateResolver.setPrefix("WEB-INF/template/");
+    public SpringResourceTemplateResolver templateResolver(){
+        SpringResourceTemplateResolver templateResolver=new SpringResourceTemplateResolver();
+        templateResolver.setApplicationContext(this.applicationContext);
+        templateResolver.setPrefix("/WEB-INF/template/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCacheable(true);
-        templateResolver.setOrder(2);
         return templateResolver;
     }
-
-
-    @Bean
-    public ClassLoaderTemplateResolver emailTemplateResolver(){
-        ClassLoaderTemplateResolver resolver=new ClassLoaderTemplateResolver();
-        resolver.setPrefix("/mail/");
-        resolver.setTemplateMode("HTML5");
-        resolver.setCharacterEncoding("UTF-8");
-        resolver.setOrder(1);
-        return resolver;
-    }
-
 
     /**
      * 配置将对静态资源的请求发给Servlet容器中默认的Servlet中进行处理
@@ -122,21 +110,19 @@ public class WebConfig extends WebMvcConfigurerAdapter implements ServletConfigA
     }
 
     @Override
-    public void setServletConfig(ServletConfig servletConfig) {
-        this.servletContext=servletConfig.getServletContext();
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext=applicationContext;
     }
 
     /**
      * 注册拦截器
      * @param registry
      */
-
-   /* @Override
+   @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //父类是一个空方法
         //添加拦截器
         //registry.addInterceptor()
         super.addInterceptors(registry);
     }
-    */
 }

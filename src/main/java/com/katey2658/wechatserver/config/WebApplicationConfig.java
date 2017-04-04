@@ -2,6 +2,7 @@ package com.katey2658.wechatserver.config;
 
 import com.katey2658.wechatserver.config.dao.RootDaoConfig;
 import com.katey2658.wechatserver.config.service.RootServiceConfig;
+import com.katey2658.wechatserver.config.service.SpringMailConfig;
 import com.katey2658.wechatserver.config.web.WebConfig;
 import com.katey2658.wechatserver.config.web.WebSecurityConfig;
 import com.katey2658.wechatserver.config.web.WebSocketConfig;
@@ -23,7 +24,9 @@ public class WebApplicationConfig
      * @return
      */
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[]{ RootServiceConfig.class,RootDaoConfig.class};
+        return new Class<?>[]{ RootServiceConfig.class
+                ,RootDaoConfig.class
+                ,SpringMailConfig.class};
     }
 
     /**
@@ -31,7 +34,9 @@ public class WebApplicationConfig
      * @return
      */
     protected Class<?>[] getServletConfigClasses() {
-        return new Class<?>[]{WebConfig.class, WebSocketConfig.class, WebSecurityConfig.class};
+        return new Class<?>[]{WebConfig.class
+                , WebSocketConfig.class
+                , WebSecurityConfig.class};
     }
 
     /**

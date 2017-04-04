@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
     <meta charset="utf-8">
     <title>有效性验证</title>
     <style type="text/css">
@@ -8,29 +9,29 @@
             padding: 0;
             outline: 0;
         }
-        body{
-            padding:0 20%;
+        .temp-body{
+            padding:0 15%;
             background: #f7f7f8;
         }
-        header{
+        .header{
             width: 100%;
             height: 77px;
             font-size: 20px;
             text-align: center;
             line-height: 77px;
         }
-        header img{
+        .header img{
             width: 35px;
             height: 35px;
             margin: 15px
         }
 
-        header img,header span{
+        .header img,.header span{
             vertical-align: middle;
         }
 
 
-        footer{
+        .footer{
             width: 100%;
             height: 40px;
             text-align: center;
@@ -52,7 +53,6 @@
             margin-top: 50px;
             padding-bottom: 50px;
         }
-
 
         .app-download{
             width: 60%;
@@ -116,60 +116,62 @@
     </style>
 </head>
 <body>
-<!-- 头部logo -->
-<header>
-    <img src="logo.png" alt="">
-    <span>购一家</span>
-</header>
-<article class="content">
-    <div class="mail">
-        <div class="mail-content">
-            <h4>Hi&nbsp;<span th:text="${username}">陌生人</span>,</h4>
-            <p class="paragraph"><span th:text="${paragraph1}"></span></p>
-            <p class="paragraph"><span th:text="${paragraph2}"></span></p>
-            <p class="paragraph">The&nbsp;GOYJ&nbsp;Team</p>
-        </div>
+<div class="temp-body">
+    <!-- 头部logo -->
+    <div class="header">
+        <img src="http://img.zcool.cn/community/01057e56f1ef1632f875a944d7985a.jpg@900w_1l_2o_100sh.jpg" alt="">
+        <span>购一家</span>
     </div>
-    <div class="app-download">
-        <div class="btn">
-            <img src="IOS.png" alt="">
-            <span>IOS&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <article class="content">
+        <div class="mail">
+            <div class="mail-content">
+                <h4>Hi&nbsp;<span th:text="${username}">陌生人</span>,</h4>
+                <p class="paragraph"><span th:text="${paragraph1}"></span></p>
+                <p class="paragraph"><span th:text="${paragraph2}"></span></p>
+                <p class="paragraph">The&nbsp;GOYJ&nbsp;Team</p>
+            </div>
         </div>
-        <div class="btn">
-            <img src="android.png" alt="">
-            <span>Android</span>
+        <div class="app-download">
+            <div class="btn">
+                <img src="${path}IOS.png" alt="">
+                <span>IOS&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            </div>
+            <div class="btn">
+                <img src="${path}android.png" alt="">
+                <span>Android</span>
+            </div>
         </div>
-    </div>
-    <div class="followus">
-        <ul class="followlink">
-            <li>
-                <a href="#">
-                    <img src="facebook.png"  alt="">
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <img src="Twitter.png" alt="">
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <img src="Google.png" alt="">
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <img src="github.png" alt="">
-                </a>
-            </li>
-        </ul>
-        <span>2465&nbsp;Latham&nbsp;St.•Mountain&nbsp;View,&nbsp;CA&nbsp;94040&nbsp;Unsubscribe</span><br>
-        <a href="#">Unsubscribe</a>
-    </div>
-</article>
-<!-- 底部条 -->
-<footer>
-      <span>Be&nbsp;in&nbsp;demind</span>
-</footer>
+        <div class="followus">
+            <ul class="followlink">
+                <li>
+                    <a href="#">
+                        <img src="${path}facebook.png"  alt="">
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="${path}Twitter.png" alt="">
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="${path}Google.png" alt="">
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="${path}github.png" alt="">
+                    </a>
+                </li>
+            </ul>
+            <span>2465&nbsp;Latham&nbsp;St.•Mountain&nbsp;View,&nbsp;CA&nbsp;94040&nbsp;Unsubscribe</span><br>
+            <a href="#" >Unsubscribe</a>
+        </div>
+    </article>
+    <!-- 底部条 -->
+</div>
+<div class="footer">
+    <span>Be&nbsp;in&nbsp;demind</span>
+</div>
 </body>
 </html>
